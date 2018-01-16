@@ -61,6 +61,19 @@ class QueueManagementTicket(models.Model):
         ('done', 'Done'),
         ('no-show', 'No-show')], 'Ticket State', required=True, copy=False, default='waiting', readonly=True)
 
+    @api.multi
+    def write(self, vals):
+        print('\n\n\n\n', vals, '\n\n\n\n')
+        state = vals.get('ticket_state')
+        if state in ['done', 'no-show']:
+            notifications = []
+            for ticket in self:
+                line = self.env['queue_management.head'].search([('ticket_id', '=', ticket.id)])
+                notifications.append(((self._cr.dbname, 'queue_management.head'), ('delete', line.id)))
+            self.env['bus.bus'].sendmany(notifications)
+            print('\n\n\n\n', line, '\n\n\n\n')
+        return super(QueueManagementTicket, self).write(vals)
+
     def _generate_order_by(self, order_spec, query):
         my_order = "CASE WHEN ticket_state = 'in_progress' THEN 0 WHEN ticket_state = 'invited' THEN 1 WHEN ticket_state = 'next' THEN 2 WHEN ticket_state = 'waiting' THEN 3 END"
         if order_spec:

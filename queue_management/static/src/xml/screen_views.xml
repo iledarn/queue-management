@@ -12,7 +12,6 @@
       <div class="col-md-8 col-md-offset-2 col-xs-12 o_screen_list"/>
     </div>
   </t>
-
   <t t-name="queue_management.screen_list">
     <div>
       <h3 class="text-center mb32 mt32">Current Tickets</h3>
@@ -34,7 +33,12 @@
       <p t-else="">No tickets to see</p>
     </div>
   </t>
-
+  <t t-name="queue_management.screen_list.line">
+    <tr t-att-data-id="line.id">
+      <td><t t-esc="line.name"/></td>
+      <td><t t-esc="line.description"/></td>
+    </tr>
+  </t>
   <t t-name="screen_viewer.screen.line">
     <tr t-att-data-id="line.id">
       <td><t t-esc='line.ticket_id[1]'/></td>

@@ -43,8 +43,13 @@ var ScreenApp = Widget.extend({
             if (message[0] === 'invited') {
                 var line_id = message[1];
                 if (!this.screen.lines.find(l => l.id === line_id)) {
-                    this.screen.fetchLine(line_id);
+                    this.screen.fetchLine(line_id).then(function (new_line) {
+                        self.list.insertLine(new_line);
+                    });
                 }
+            } else if (message[0] === 'delete') {
+                this.screen.removeLine(message[1]);
+                this.list.removeLine(message[1]);
             }
         }
     },
@@ -55,6 +60,17 @@ var ScreenList = Widget.extend({
     init: function (parent, lines) {
         this._super.apply(this, arguments);
         this.lines = lines;
+    },
+    insertLine: function (line) {
+        this._rerender();
+        var line_node = qweb.render('queue_management.screen_list.line', {widget: this});
+        this.$('tbody').prepend(line_node);
+    },
+    removeLine: function (id) {
+        this.$('tr[data-id=' + id + ']').remove();
+        if (!this.$('tr[data-id]').length) {
+            this._rerender();
+        }
     },
     _rerender: function () {
         this.replaceElement(qweb.render('queue_management.screen_list', {widget: this}));

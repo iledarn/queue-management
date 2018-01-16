@@ -55,10 +55,17 @@ var Screen = Class.extend({
         }).then(function (line_values) {
             if (line_values.length) {
                 var line = new Line(line_values[0]);
-                self.lines.push(ticket);
+                self.lines.push(line);
             }
             return line;
         });
+    },
+
+    removeLine: function (id) {
+        var l_idx = this.lines.findIndex(l => l.id === id);
+        if (l_idx !== -1) {
+            this.lines.splice(l_idx, 1);
+        }
     },
 });
 
