@@ -16,18 +16,10 @@ class QueueManagement(BusController):
         channels.append(screen_channel)
         return super(QueueManagement, self)._poll(dbname, channels, last, options)
 
-    # @http.route('/queue/services/', auth='public')
-    # def service(self, **kw):
-    #     service_ids = request.env['queue_management.service'].sudo().search([('active', '=', True)])
-    #     values = {
-    #         'service_ids': service_ids,
-    #     }
-    #     return http.request.render('queue_management.queue_service', values)
+    @http.route('/queue/service/', auth='public')
+    def service(self, **kw):
+        return http.request.render('queue_management.queue_service')
 
     @http.route('/queue/screen/', auth='public')
     def screen(self, **kw):
-        log_records = request.env['queue_management.head'].sudo().search([('ticket_state', 'in', ('invited', 'in_progress'))])
-        values = {
-            'log_records': log_records,
-        }
-        return http.request.render('queue_management.queue_screen', values)
+        return http.request.render('queue_management.queue_screen')
