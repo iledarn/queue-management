@@ -20,10 +20,7 @@ var ScreenApp = Widget.extend({
     },
     willStart: function () {
         return $.when(this._super.apply(this, arguments),
-                      this.screen.fetchAllLines()
-                     ).then(function (dummy, user) {
-                         bus.update_option('demo.ticket', user.partner_id);
-                     });
+                      this.screen.fetchAllLines());
     },
     start: function () {
         var self = this;
@@ -92,7 +89,7 @@ var ScreenList = Widget.extend({
     },
 });
 
-var $elem = $('.o_service_app');
+var $elem = $('.o_screen_app');
 var app = new ScreenApp(null);
 app.appendTo($elem).then(function () {
     bus.start_polling();
