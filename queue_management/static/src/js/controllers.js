@@ -50,6 +50,15 @@ var ScreenApp = Widget.extend({
             } else if (message[0] === 'delete') {
                 this.screen.removeLine(message[1]);
                 this.list.removeLine(message[1]);
+            } else if (message[0] === 'change') {
+                var line_id = message[1];
+                if (this.screen.lines.find(l => l.id === line_id)) {
+                    this.screen.fetchLine(line_id).then(function (line) {
+                        self.list.insertLine(line);
+                    });
+                }
+                this.screen.changeLine(message[1]);
+                this.list.changeLine(message[1]);
             }
         }
     },
@@ -62,8 +71,11 @@ var ScreenList = Widget.extend({
         this.lines = lines;
     },
     insertLine: function (line) {
-        this._rerender();
-        var line_node = qweb.render('queue_management.screen_list.line', {widget: this});
+        if (!this.$('tbody').length) {
+            this._rerender();
+            return;
+        }
+        var line_node = qweb.render('queue_management.screen_list.line', {line: line});
         this.$('tbody').prepend(line_node);
     },
     removeLine: function (id) {
@@ -72,13 +84,15 @@ var ScreenList = Widget.extend({
             this._rerender();
         }
     },
+    changeLine: function (line) {
+        this.replaceElement(qweb.render('queue_management.screen_list.line', {line: line}));
+    },
     _rerender: function () {
         this.replaceElement(qweb.render('queue_management.screen_list', {widget: this}));
     },
 });
 
-
-var $elem = $('.o_screen_app');
+var $elem = $('.o_service_app');
 var app = new ScreenApp(null);
 app.appendTo($elem).then(function () {
     bus.start_polling();

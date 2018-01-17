@@ -8,7 +8,6 @@ from odoo.http import request
 
 class QueueManagement(BusController):
     def _poll(self, dbname, channels, last, options):
-        print('\n\n\n', 'in QueueManagement _poll', '\n\n\n')
         channels = list(channels)
         screen_channel = (
             request.db,
@@ -16,6 +15,14 @@ class QueueManagement(BusController):
         )
         channels.append(screen_channel)
         return super(QueueManagement, self)._poll(dbname, channels, last, options)
+
+    # @http.route('/queue/services/', auth='public')
+    # def service(self, **kw):
+    #     service_ids = request.env['queue_management.service'].sudo().search([('active', '=', True)])
+    #     values = {
+    #         'service_ids': service_ids,
+    #     }
+    #     return http.request.render('queue_management.queue_service', values)
 
     @http.route('/queue/screen/', auth='public')
     def screen(self, **kw):

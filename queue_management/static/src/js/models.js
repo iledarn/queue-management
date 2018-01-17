@@ -67,6 +67,13 @@ var Screen = Class.extend({
             this.lines.splice(l_idx, 1);
         }
     },
+
+    changeLine: function (id) {
+        var l_idx = this.lines.findIndex(l => l.id === id);
+        if (l_idx !== -1) {
+            this.lines.splice(l_idx, 1);
+        }
+    },
 });
 
 return {

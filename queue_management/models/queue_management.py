@@ -13,7 +13,6 @@ class QueueManagementWindow(models.Model):
 class QueueManagementService(models.Model):
     _name = 'queue_management.service'
     _order = 'priority'
-
     name = fields.Char(required=True, string='Description')
     active = fields.Boolean(default=True)
     sequence_id = fields.Many2one('ir.sequence', string='Letter', required=True)
@@ -63,13 +62,19 @@ class QueueManagementTicket(models.Model):
 
     @api.multi
     def write(self, vals):
-        print('\n\n\n\n', vals, '\n\n\n\n')
         state = vals.get('ticket_state')
         if state in ['done', 'no-show']:
             notifications = []
             for ticket in self:
                 line = self.env['queue_management.head'].search([('ticket_id', '=', ticket.id)])
                 notifications.append(((self._cr.dbname, 'queue_management.head'), ('delete', line.id)))
+            self.env['bus.bus'].sendmany(notifications)
+        elif state == 'in_progress':
+            print('\n\n\n\n', state, '\n\n\n\n')
+            notifications = []
+            for ticket in self:
+                line = self.env['queue_management.head'].search([('ticket_id', '=', ticket.id)])
+                notifications.append(((self._cr.dbname, 'queue_management.head'), ('change', line.id)))
             self.env['bus.bus'].sendmany(notifications)
             print('\n\n\n\n', line, '\n\n\n\n')
         return super(QueueManagementTicket, self).write(vals)
