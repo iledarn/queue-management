@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <t t-name="queue_management.service">
+    <div>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a href="#" class="navbar-brand">Service</a>
+          </div>
+        </div>
+      </nav>
+      <div class="col-md-8 col-md-offset-2 col-xs-12 o_service_list"/>
+    </div>
+  </t>
+  <t t-name="queue_management.service_list">
+    <div>
+      <h3 class="text-center mb32 mt32">Available services</h3>
+      <t t-if="widget.service_lines.length">
+        <div class="row justify-content-start">
+          <t t-foreach="widget.service_lines" t-as="service_line">
+            <div class="col-md-3">
+                <button class="btn btn-default o_new_ticket" t-att-data-service-id="service_line.id">
+                  <t t-call="service_viewer.service.service_line"/>
+                </button>
+            </div>
+          </t>
+        </div>
+      </t>
+      <p t-else="">No available services</p>
+    </div>
+  </t>
+  <t t-name="queue_management.service_list.service_line">
+    <tr t-att-data-id="service_line.id">
+      <td><t t-esc="service_line.name"/></td>
+    </tr>
+  </t>
+  <t t-name="service_viewer.service.service_line">
+    <tr t-att-data-id="service_line.id">
+      <td><t t-esc='service_line.name'/></td>
+    </tr>
+  </t>
+</odoo>

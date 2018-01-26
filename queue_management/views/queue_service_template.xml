@@ -2,7 +2,7 @@
 <odoo>
   <data>
 
-    <template id="screen_assets" name="Screen Viewer Application Assets" inherit_id="web.assets_frontend" primary="True">
+    <template id="service_assets" name="Service Viewer Application Assets" inherit_id="web.assets_frontend" primary="True">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/bus/static/src/js/bus.js"/>
             <script type="text/javascript" src="/web/static/src/js/widgets/notification.js"/>
@@ -11,16 +11,16 @@
         </xpath>
     </template>
 
-      <template id="queue_screen">
+      <template id="queue_service">
         <t t-call="web.layout">
             <t t-set="head">  
                 <t t-call-assets="web.assets_common" t-js="false"/>
-                <t t-call-assets="queue_management.screen_assets" t-js="false"/>
+                <t t-call-assets="queue_management.service_assets" t-js="false"/>
                 <t t-call-assets="web.assets_common" t-css="false"/>
-                <t t-call-assets="queue_management.screen_assets" t-css="false"/>
+                <t t-call-assets="queue_management.service_assets" t-css="false"/>
             </t>
             <div class="container-fluid">
-                <div class="row o_screen_app"/>
+                <div class="row o_service_app"/>
             </div>
         </t>
     </template>

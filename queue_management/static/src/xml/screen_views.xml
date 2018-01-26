@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <t t-name="queue_management.app">
+  <t t-name="queue_management.screen">
     <div>
       <nav class="navbar navbar-default">
         <div class="container-fluid">

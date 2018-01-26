@@ -117,10 +117,19 @@
       </form>
     </field>
   </record>
+  <record model="ir.ui.view" id="queue_management_view_search" >
+    <field name="name">queue_management.service.filter</field>
+    <field name="model">queue_management.service</field>
+    <field name="arch" type="xml">
+      <search string="Filter">
+      </search>
+    </field>
+  </record> 
   <record model="ir.actions.act_window" id="queue_management_service_action">
     <field name="name">Service</field>
     <field name="res_model">queue_management.service</field>
     <field name="view_mode">tree,form</field>
+    <field name="context">{'active_test': False}</field>
   </record>
   <menuitem id="queue_management_service_menu_action" parent="queue_management_menu_configuration" action="queue_management_service_action"/>
   <record id="queue_management_service_view_form" model="ir.ui.view">
