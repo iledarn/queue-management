@@ -39,4 +39,14 @@
       <td><t t-esc='service_line.name'/></td>
     </tr>
   </t>
+  <t t-name="Notification">
+    <div class="o_notification" t-translation="off">
+      <a t-if="widget.sticky" class="fa fa-times o_close" href="#"/>
+      <div class="o_notification_title">
+        <span class="o_icon fa fa-3x fa-lightbulb-o"/>
+        <t t-raw="widget.title"/>
+      </div>
+      <div class="o_notification_content" t-if="widget.text"><t t-raw="widget.text"/></div>
+    </div>
+  </t>
 </odoo>
