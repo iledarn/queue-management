@@ -132,20 +132,18 @@ var Service = Class.extend({
             return service_line;
         });
     },
-
-    // removeLine: function (id) {
-    //     var l_idx = this.lines.findIndex(l => l.id === id);
-    //     if (l_idx !== -1) {
-    //         this.lines.splice(l_idx, 1);
-    //     }
-    // },
-
-    // changeLine: function (id) {
-    //     var l_idx = this.lines.findIndex(l => l.id === id);
-    //     if (l_idx !== -1) {
-    //         this.lines.splice(l_idx, 1);
-    //     }
-    // },
+    removeButton: function (id) {
+        var s_idx = this.service_lines.findIndex(s => s.id === id);
+        if (s_idx !== -1) {
+            this.service_lines.splice(s_idx, 1);
+        }
+    },
+    changeButton: function (id) {
+        var s_idx = this.service_lines.findIndex(s => s.id === id);
+        if (s_idx !== -1) {
+            this.service_lines.splice(s_idx, 1);
+        }
+    },
 });
 
 return {

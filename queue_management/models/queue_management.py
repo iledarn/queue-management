@@ -14,14 +14,44 @@ class QueueManagementService(models.Model):
     _name = 'queue_management.service'
     _order = 'priority'
     name = fields.Char(required=True, string='Description')
-    active = fields.Boolean(default=True)
+    active = fields.Boolean(default=False)
     sequence_id = fields.Many2one('ir.sequence', string='Letter', required=True)
     priority = fields.Integer(default=5)
+
+    @api.model
+    def create(self, vals):
+        service_rec = super(QueueManagementService, self).create(vals)
+        service_state = vals.get('active')
+        if service_state:
+            (channel, message) = ((self._cr.dbname, 'queue_management.service'), ('add_service_button', service_rec.id))
+            self.env['bus.bus'].sendone(channel, message)
+        return service_rec
+
+    @api.multi
+    def write(self, vals):
+        print('\n\n\n\n', vals, '\n\n\n')
+        service_state = vals.get('active')
+        print('\n\n\n\n', service_state, '\n\n\n')
+        if service_state is False:
+            notifications = []
+            for service in self:
+                notifications.append(((self._cr.dbname, 'queue_management.service'), ('delete_service_button', service.id)))
+            self.env['bus.bus'].sendmany(notifications)
+        if service_state:
+            notifications = []
+            for service in self:
+                notifications.append(((self._cr.dbname, 'queue_management.service'), ('add_service_button', service.id)))
+            self.env['bus.bus'].sendmany(notifications)
+        if vals.get('name'):
+            notifications = []
+            for service in self:
+                notifications.append(((self._cr.dbname, 'queue_management.service'), ('change_service_button', service.id)))
+            self.env['bus.bus'].sendmany(notifications)
+        return super(QueueManagementService, self).write(vals)
 
 
 class QueueManagementQueue(models.Model):
     _name = 'queue_management.queue'
-
     service_id = fields.Many2one('queue_management.service', 'Service')
     ticket_ids = fields.One2many('queue_management.ticket', 'queue_id', readonly=True)
 
@@ -30,7 +60,8 @@ class QueueManagementHead(models.Model):
     _name = 'queue_management.head'
     ticket_id = fields.Many2one('queue_management.ticket', 'Ticket', readonly=True)
     window_id = fields.Many2one('queue_management.window', string='Service window', required=True)
-    service_id = fields.Many2one('queue_management.service', 'Service', related='ticket_id.service_id', readonly=True)
+    service_id = fields.Many2one('queue_management.service', 'Service',
+                                 related='ticket_id.service_id', ondelete='restrict', readonly=True)
     ticket_state = fields.Selection(string='Ticket State', related='ticket_id.ticket_state', readonly=True, store=True)
 
     def _generate_order_by(self, order_spec, query):
@@ -70,13 +101,11 @@ class QueueManagementTicket(models.Model):
                 notifications.append(((self._cr.dbname, 'queue_management.head'), ('delete', line.id)))
             self.env['bus.bus'].sendmany(notifications)
         elif state == 'in_progress':
-            print('\n\n\n\n', state, '\n\n\n\n')
             notifications = []
             for ticket in self:
                 line = self.env['queue_management.head'].search([('ticket_id', '=', ticket.id)])
                 notifications.append(((self._cr.dbname, 'queue_management.head'), ('change', line.id)))
             self.env['bus.bus'].sendmany(notifications)
-            print('\n\n\n\n', line, '\n\n\n\n')
         return super(QueueManagementTicket, self).write(vals)
 
     def _generate_order_by(self, order_spec, query):

@@ -13,7 +13,12 @@ class QueueManagement(BusController):
             request.db,
             'queue_management.head',
         )
+        service_channel = (
+            request.db,
+            'queue_management.service',
+        )
         channels.append(screen_channel)
+        channels.append(service_channel)
         return super(QueueManagement, self)._poll(dbname, channels, last, options)
 
     @http.route('/queue/service/', auth='public')

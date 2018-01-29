@@ -124,7 +124,37 @@ var ServiceApp = Widget.extend({
         return this._super.apply(this, arguments).then(function () {
             self.list = new ServiceList(self, self.service.service_lines);
             self.list.appendTo($('.o_service_list'));
+            bus.on('notification', self, self._onNotification);
         });
+    },
+    _onNotification: function (notifications) {
+        var self = this;
+        for (var notif of notifications) {
+            var channel = notif[0], message = notif[1];
+            if (channel[1] !== 'queue_management.service') {
+                return;
+            }
+            if (message[0] === 'add_service_button') {
+                var service_id = message[1];
+                if (!this.service.service_lines.find(s => s.id === service_id)) {
+                    this.service.fetchServiceLine(service_id).then(function (new_service) {
+                        self.list.insertButton(new_service);
+                    });
+                }
+            } else if (message[0] === 'delete_service_button') {
+                this.service.removeButton(message[1]);
+                this.list.removeButton(message[1]);
+            } else if (message[0] === 'change_service_button') {
+                var service_id = message[1];
+                if (this.service.service_lines.find(s => s.id === service_id)) {
+                    this.service.fetchServiceLine(service_id).then(function (new_service) {
+                        self.list.insertButton(new_service);
+                    });
+                }
+                this.service.changeButton(message[1]);
+                this.list.changeButton(message[1]);
+            }
+        }
     },
     _onNewTicket: function (ev) {
         var service_id = $(ev.currentTarget).data('service-id');
@@ -153,10 +183,29 @@ var ServiceList = Widget.extend({
         this._super.apply(this, arguments);
         this.service_lines = service_lines;
     },
+    insertButton: function (service_line) {
+        if (!this.$('tbody').length) {
+            this._rerender();
+            return;
+        }
+        var button_node = qweb.render('queue_management.service_list.service_button', {service_line: service_line});
+        this.$('tbody').prepend(button_node);
+    },
+    removeButton: function (id) {
+        this.$('div[data-service-id=' + id + ']').remove();
+        if (!this.$('div[data-service-id]').length) {
+            this._rerender();
+        }
+    },
+    changeButton: function (service_line) {
+        this.replaceElement(qweb.render('queue_management.service_list.service_button', {service_line: service_line}));
+    },
+    _rerender: function () {
+        this.replaceElement(qweb.render('queue_management.service_list', {widget: this}));
+    },
 });
 
 var $elem = $('.o_service_app');
 var app = new ServiceApp(null);
 app.appendTo($elem);
-
 });

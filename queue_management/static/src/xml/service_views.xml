@@ -18,26 +18,19 @@
       <t t-if="widget.service_lines.length">
         <div class="row justify-content-start">
           <t t-foreach="widget.service_lines" t-as="service_line">
-            <div class="col-md-3">
-                <button class="btn btn-default o_new_ticket" t-att-data-service-id="service_line.id">
-                  <t t-call="service_viewer.service.service_line"/>
-                </button>
-            </div>
+            <t t-call="queue_management.service_list.service_button"/>
           </t>
         </div>
       </t>
       <p t-else="">No available services</p>
     </div>
   </t>
-  <t t-name="queue_management.service_list.service_line">
-    <tr t-att-data-id="service_line.id">
-      <td><t t-esc="service_line.name"/></td>
-    </tr>
-  </t>
-  <t t-name="service_viewer.service.service_line">
-    <tr t-att-data-id="service_line.id">
-      <td><t t-esc='service_line.name'/></td>
-    </tr>
+  <t t-name="queue_management.service_list.service_button">
+    <div class="col-md-3" t-att-data-service-id="service_line.id">
+      <button class="btn btn-default o_new_ticket">
+        <t t-esc='service_line.name'/>
+      </button>
+    </div>
   </t>
   <t t-name="Notification">
     <div class="o_notification" t-translation="off">
