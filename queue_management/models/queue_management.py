@@ -29,9 +29,7 @@ class QueueManagementService(models.Model):
 
     @api.multi
     def write(self, vals):
-        print('\n\n\n\n', vals, '\n\n\n')
         service_state = vals.get('active')
-        print('\n\n\n\n', service_state, '\n\n\n')
         if service_state is False:
             notifications = []
             for service in self:

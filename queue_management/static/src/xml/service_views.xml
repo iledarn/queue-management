@@ -27,7 +27,7 @@
   </t>
   <t t-name="queue_management.service_list.service_button">
     <div class="col-md-3" t-att-data-service-id="service_line.id">
-      <button class="btn btn-default o_new_ticket">
+      <button class="btn btn-default o_new_ticket" t-att-data-service-id="service_line.id">
         <t t-esc='service_line.name'/>
       </button>
     </div>
