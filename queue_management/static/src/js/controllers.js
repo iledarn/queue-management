@@ -161,7 +161,7 @@ var ServiceApp = Widget.extend({
         var self = this;
         rpc.query({
             model: 'queue_management.ticket',
-            method: 'create',
+            method: 'create_ticket',
             args: [{service_id: service_id}],
         })
             .then(function (record){
@@ -183,22 +183,41 @@ var ServiceList = Widget.extend({
         this._super.apply(this, arguments);
         this.service_lines = service_lines;
     },
+    start: function () {
+        this.setEqualHeight();
+        return $.when();
+    },
     insertButton: function (service_line) {
-        if (!this.$('tbody').length) {
+        if (!this.$('.col-md-3').length) {
             this._rerender();
             return;
         }
         var button_node = qweb.render('queue_management.service_list.service_button', {service_line: service_line});
-        this.$('tbody').prepend(button_node);
+        this.$('.col-md-3:last').after(button_node);
+        this.setEqualHeight();
+    },
+    setEqualHeight: function () {
+        var tallestcolumn = 0;
+        var buttons = this.$('.btn-info');
+        var currentHeight = 0;
+        buttons.each(function () {
+            currentHeight = $(this).height();
+            if (currentHeight > tallestcolumn) {
+                tallestcolumn = currentHeight;
+            }
+        });
+        buttons.height(tallestcolumn);
     },
     removeButton: function (id) {
         this.$('div[data-service-id=' + id + ']').remove();
         if (!this.$('div[data-service-id]').length) {
             this._rerender();
         }
+        this.setEqualHeight();
     },
     changeButton: function (service_line) {
         this.replaceElement(qweb.render('queue_management.service_list.service_button', {service_line: service_line}));
+        this.setEqualHeight();
     },
     _rerender: function () {
         this.replaceElement(qweb.render('queue_management.service_list', {widget: this}));

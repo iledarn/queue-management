@@ -28,6 +28,14 @@ class QueueManagementService(models.Model):
         return service_rec
 
     @api.multi
+    def unlink(self):
+        notifications = []
+        for service in self:
+            notifications.append(((self._cr.dbname, 'queue_management.service'), ('delete_service_button', service.id)))
+            self.env['bus.bus'].sendmany(notifications)
+        return super(QueueManagementService, self).unlink()
+
+    @api.multi
     def write(self, vals):
         service_state = vals.get('active')
         if service_state is False:
@@ -50,7 +58,7 @@ class QueueManagementService(models.Model):
 
 class QueueManagementQueue(models.Model):
     _name = 'queue_management.queue'
-    service_id = fields.Many2one('queue_management.service', 'Service')
+    service_id = fields.Many2one('queue_management.service', 'Service', ondelete='restrict')
     ticket_ids = fields.One2many('queue_management.ticket', 'queue_id', readonly=True)
 
 
@@ -79,7 +87,7 @@ class QueueManagementHead(models.Model):
 class QueueManagementTicket(models.Model):
     _name = 'queue_management.ticket'
     name = fields.Char(string='Ticket Name', readonly=True)
-    queue_id = fields.Many2one('queue_management.queue', 'Queue', required='True')
+    queue_id = fields.Many2one('queue_management.queue', 'Queue', required='True', ondelete='cascade')
     service_id = fields.Many2one('queue_management.service', 'Service', related='queue_id.service_id')
     ticket_state = fields.Selection([
         ('waiting', 'Waiting'),
@@ -88,6 +96,11 @@ class QueueManagementTicket(models.Model):
         ('invited', 'Invited'),
         ('done', 'Done'),
         ('no-show', 'No-show')], 'Ticket State', required=True, copy=False, default='waiting', readonly=True)
+
+    @api.model
+    def create_ticket(self, vals):
+        new_ticket = self.sudo().create(vals).id
+        return new_ticket
 
     @api.multi
     def write(self, vals):
@@ -170,6 +183,8 @@ class QueueManagementTicket(models.Model):
     @api.multi
     def call_client(self):
         self.ensure_one()
+        if self.env.user.window_id.id is False:
+            raise UserError(_('%s, you don\'t have a Service window!') % self.env.user.name)
         if self.search([('ticket_state', 'in', ('invited', 'in_progress'))]):
             raise UserError(_('You already have "%s" client') % self.service_id.name)
         else:

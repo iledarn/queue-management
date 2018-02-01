@@ -26,8 +26,11 @@
     </div>
   </t>
   <t t-name="queue_management.service_list.service_button">
-    <div class="col-md-3" t-att-data-service-id="service_line.id">
-      <button class="btn btn-default o_new_ticket" t-att-data-service-id="service_line.id">
+    <div class="col-md-3" style="margin-top: 15px;"
+                                  t-att-data-service-id="service_line.id">
+      <button class="btn btn-info btn-block o_new_ticket"
+              style="white-space: normal;"
+              t-att-data-service-id="service_line.id">
         <t t-esc='service_line.name'/>
       </button>
     </div>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <menuitem name="Queue Management" id="queue_management_menu_root"/>
-  <menuitem name="Queues" id="queue_management_menu_queue" parent="queue_management_menu_root"/>
-  <menuitem name="Configuration" id="queue_management_menu_configuration" parent="queue_management_menu_root"/>
+  <menuitem name="Queue Management" id="queue_management_menu_root" groups="group_queue_management_agent"/>
+  <menuitem name="Queues" id="queue_management_menu_queue" parent="queue_management_menu_root" groups="group_queue_management_agent"/>
+  <menuitem name="Configuration" id="queue_management_menu_configuration" parent="queue_management_menu_root" groups="group_queue_management_manager"/>
   <record id="queue_management_head_action" model="ir.actions.act_window">
     <field name="name">Head</field>
     <field name="res_model">queue_management.head</field>
@@ -131,7 +131,7 @@
     <field name="view_mode">tree,form</field>
     <field name="context">{'active_test': False}</field>
   </record>
-  <menuitem id="queue_management_service_menu_action" parent="queue_management_menu_configuration" action="queue_management_service_action"/>
+  <menuitem id="queue_management_service_menu_action" parent="queue_management_menu_configuration" action="queue_management_service_action" groups="group_queue_management_manager"/>
   <record id="queue_management_service_view_form" model="ir.ui.view">
     <field name="name">queue_management.service.form</field>
     <field name="model">queue_management.service</field>
@@ -161,7 +161,7 @@
     <field name="res_model">queue_management.window</field>
     <field name="view_mode">tree,form</field>
   </record>
-  <menuitem id="queue_management_window_menu_action" parent="queue_management_menu_configuration" action="queue_management_window_action"/>
+  <menuitem id="queue_management_window_menu_action" parent="queue_management_menu_configuration" action="queue_management_window_action" groups="group_queue_management_manager"/>
   <record id="queue_management_window_view_form" model="ir.ui.view">
     <field name="name">queue_management.window.form</field>
     <field name="model">queue_management.window</field>
