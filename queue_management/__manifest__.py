@@ -16,11 +16,14 @@
     # "currency": "EUR",
 
     "depends": [
+        # "hw_escpos",
         "web",
         "bus",
     ],
     "external_dependencies": {"python": [], "bin": []},
     "data": [
+        "security/queue_management_security.xml",
+        "security/ir.model.access.csv",
         "views/queue_management_views.xml",
         "views/res_users_view.xml",
         "views/queue_screen_template.xml",
