@@ -194,7 +194,6 @@ var ServiceList = Widget.extend({
         }
         var button_node = qweb.render('queue_management.service_list.service_button', {service_line: service_line});
         this.$('.col-md-3:last').after(button_node);
-        this.setEqualHeight();
     },
     setEqualHeight: function () {
         var tallestcolumn = 0;
@@ -213,11 +212,9 @@ var ServiceList = Widget.extend({
         if (!this.$('div[data-service-id]').length) {
             this._rerender();
         }
-        this.setEqualHeight();
     },
     changeButton: function (service_line) {
         this.replaceElement(qweb.render('queue_management.service_list.service_button', {service_line: service_line}));
-        this.setEqualHeight();
     },
     _rerender: function () {
         this.replaceElement(qweb.render('queue_management.service_list', {widget: this}));
