@@ -2,6 +2,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning as UserError
 from odoo.tools.translate import _
+import pyttsx3
 
 
 class QueueManagementWindow(models.Model):
@@ -189,11 +190,17 @@ class QueueManagementTicket(models.Model):
             raise UserError(_('You already have "%s" client') % self.service_id.name)
         else:
             self.ticket_state = 'invited'
-            self.env['queue_management.head'].sudo().create({'ticket_id': self.id, 'window_id': self.env.user.window_id.id})
+            self.env['queue_management.head'].create({'ticket_id': self.id, 'window_id': self.env.user.window_id.id})
             ticket = self.get_next_ticket(self.service_id.id)
             if ticket and ticket.id != self.id:
                 ticket.ticket_state = 'next'
             self._refresh_ticket_list()
+            message = 'Ticket ' + self.name + ', please come to window number ' + str(self.env.user.window_id.name)
+            engine = pyttsx3.init()
+            rate = engine.getProperty('rate')
+            engine.setProperty('rate', rate - 80)
+            engine.say(message)
+            engine.runAndWait()
 
 
 class QueueManagementServiceWindow(models.Model):
